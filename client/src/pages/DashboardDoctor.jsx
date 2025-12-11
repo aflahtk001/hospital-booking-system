@@ -12,6 +12,19 @@ const DashboardDoctor = () => {
     // Schedule Form
     const [day, setDay] = useState('Monday');
     const [slots, setSlots] = useState('');
+    const [scheduleLoading, setScheduleLoading] = useState(false);
+
+    const config = { headers: { Authorization: `Bearer ${user.token}` } };
+
+    const fetchData = async () => {
+        try {
+            const appts = await axios.get(`${import.meta.env.VITE_API_URL}/api/doctors/appointments/upcoming`, config);
+            setAppointments(appts.data);
+        } catch (error) {
+            console.error(error);
+        }
+    };
+
     useEffect(() => {
         const loadData = async () => {
             setLoading(true);
@@ -41,7 +54,6 @@ const DashboardDoctor = () => {
 
     const handleStatusUpdate = async (id, status) => {
         try {
-            // Optimistic update or local loading could be better, but let's just toast
             await axios.put(`${import.meta.env.VITE_API_URL}/api/doctors/appointments/${id}/status`, { status }, config);
             toast.success(`Appointment ${status}`);
             fetchData();
