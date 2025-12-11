@@ -3,29 +3,31 @@
 @tailwind utilities;
 
 body {
-  @apply bg-white text-gmailGray-900;
-  font-family: 'Roboto', 'Helvetica', 'Arial', sans-serif;
+  @apply bg-white dark:bg-appleGray-800 text-appleGray-900 dark:text-white transition-colors duration-300;
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
-/* Gmail-inspired components */
+/* Apple-inspired components */
 @layer components {
-  .gmail-card {
-    @apply bg-white rounded-lg shadow-sm border border-gmailGray-200 p-6;
+  .apple-card {
+    @apply bg-white dark:bg-appleGray-700 rounded-2xl shadow-sm border border-appleGray-200 dark:border-appleGray-600 p-6 transition-all duration-300;
   }
 
-  .gmail-btn-primary {
-    @apply bg-primary text-white px-6 py-2 rounded-md font-medium hover:bg-red-700 transition-colors;
+  .apple-btn-primary {
+    @apply bg-primary text-white px-6 py-3 rounded-full font-medium hover:bg-blue-600 transition-all duration-200 shadow-sm;
   }
 
-  .gmail-btn-secondary {
-    @apply bg-secondary text-white px-6 py-2 rounded-md font-medium hover:bg-blue-700 transition-colors;
+  .apple-btn-secondary {
+    @apply bg-appleGray-100 dark:bg-appleGray-600 text-appleGray-900 dark:text-white px-6 py-3 rounded-full font-medium hover:bg-appleGray-200 dark:hover:bg-appleGray-500 transition-all duration-200;
   }
 
-  .gmail-input {
-    @apply w-full px-4 py-3 border border-gmailGray-300 rounded-md focus:outline-none focus:border-secondary focus:ring-1 focus:ring-secondary;
+  .apple-input {
+    @apply w-full px-4 py-3 bg-appleGray-50 dark:bg-appleGray-700 border border-appleGray-200 dark:border-appleGray-600 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200 text-appleGray-900 dark:text-white;
   }
 
-  .gmail-table {
-    @apply min-w-full divide-y divide-gmailGray-200 bg-white;
+  .apple-navbar {
+    @apply bg-white/80 dark:bg-appleGray-800/80 backdrop-blur-md border-b border-appleGray-200 dark:border-appleGray-700 transition-colors duration-300;
   }
 }
