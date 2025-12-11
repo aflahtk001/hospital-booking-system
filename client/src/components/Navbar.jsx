@@ -12,27 +12,30 @@ const Navbar = () => {
     };
 
     return (
-        <nav className="bg-white shadow-md">
+        <nav className="bg-white border-b border-gmailGray-200 shadow-sm">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="flex justify-between h-16">
-                    <div className="flex">
-                        <Link to="/" className="flex-shrink-0 flex items-center text-primary font-bold text-xl">
-                            HospitalToken
+                    <div className="flex items-center">
+                        <Link to="/" className="flex items-center space-x-2">
+                            <div className="w-10 h-10 bg-primary rounded-full flex items-center justify-center">
+                                <span className="text-white font-bold text-xl">H</span>
+                            </div>
+                            <span className="text-gmailGray-900 font-medium text-xl">Hospital Booking</span>
                         </Link>
                     </div>
-                    <div className="flex items-center space-x-4">
+                    <div className="flex items-center space-x-6">
                         {user ? (
                             <>
-                                <span className="text-gray-700">Hello, {user.name}</span>
-                                {user.role === 'user' && <Link to="/dashboard" className="text-gray-600 hover:text-primary">Dashboard</Link>}
-                                {user.role === 'doctor' && <Link to="/doctor-dashboard" className="text-gray-600 hover:text-primary">Dashboard</Link>}
-                                {user.role === 'admin' && <Link to="/admin-dashboard" className="text-gray-600 hover:text-primary">Dashboard</Link>}
-                                <button onClick={handleLogout} className="text-red-500 hover:text-red-700">Logout</button>
+                                <span className="text-gmailGray-700 text-sm">Hello, <span className="font-medium">{user.name}</span></span>
+                                {user.role === 'user' && <Link to="/dashboard" className="text-gmailGray-700 hover:text-secondary font-medium">Dashboard</Link>}
+                                {user.role === 'doctor' && <Link to="/doctor-dashboard" className="text-gmailGray-700 hover:text-secondary font-medium">Dashboard</Link>}
+                                {user.role === 'admin' && <Link to="/admin-dashboard" className="text-gmailGray-700 hover:text-secondary font-medium">Dashboard</Link>}
+                                <button onClick={handleLogout} className="text-gmailGray-700 hover:text-primary font-medium">Logout</button>
                             </>
                         ) : (
                             <>
-                                <Link to="/login" className="text-gray-600 hover:text-primary">Login</Link>
-                                <Link to="/register" className="bg-primary text-white px-4 py-2 rounded-md hover:bg-sky-600">Register</Link>
+                                <Link to="/login" className="text-gmailGray-700 hover:text-secondary font-medium">Sign in</Link>
+                                <Link to="/register" className="gmail-btn-primary">Get started</Link>
                             </>
                         )}
                     </div>

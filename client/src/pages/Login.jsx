@@ -26,45 +26,47 @@ const Login = ({ role = 'user' }) => {
         }
     };
 
-    const title = role === 'admin' ? 'Admin Login' : role === 'doctor' ? 'Doctor Login' : 'Patient Login';
-    const bgColor = role === 'admin' ? 'bg-secondary' : role === 'doctor' ? 'bg-accent' : 'bg-primary';
+    const title = role === 'admin' ? 'Admin Sign in' : role === 'doctor' ? 'Doctor Sign in' : 'Patient Sign in';
 
     return (
-        <div className="flex justify-center items-center h-[calc(100vh-64px)] bg-gray-100">
-            <div className="bg-white p-8 rounded-lg shadow-md w-96">
-                <h2 className={`text-2xl font-bold mb-6 text-center ${role === 'admin' ? 'text-secondary' : role === 'doctor' ? 'text-accent' : 'text-primary'}`}>
-                    {title}
-                </h2>
-                <form onSubmit={handleSubmit}>
-                    <div className="mb-4">
-                        <label className="block text-gray-700 text-sm font-bold mb-2">
+        <div className="flex justify-center items-center min-h-[calc(100vh-64px)] bg-gmailGray-50 py-12">
+            <div className="gmail-card w-full max-w-md">
+                <div className="text-center mb-8">
+                    <div className="w-16 h-16 bg-primary rounded-full flex items-center justify-center mx-auto mb-4">
+                        <span className="text-white font-bold text-2xl">H</span>
+                    </div>
+                    <h2 className="text-2xl font-normal text-gmailGray-900 mb-2">{title}</h2>
+                    <p className="text-gmailGray-600 text-sm">to continue to Hospital Booking</p>
+                </div>
+                <form onSubmit={handleSubmit} className="space-y-4">
+                    <div>
+                        <label className="block text-gmailGray-700 text-sm font-medium mb-2">
                             {role === 'admin' ? 'Username' : 'Email'}
                         </label>
                         <input
                             type={role === 'admin' ? 'text' : 'email'}
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
-                            className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-opacity-50"
-                            style={{ borderColor: 'inherit' }}
+                            className="gmail-input"
                             required
                         />
                     </div>
-                    <div className="mb-6">
-                        <label className="block text-gray-700 text-sm font-bold mb-2">Password</label>
+                    <div>
+                        <label className="block text-gmailGray-700 text-sm font-medium mb-2">Password</label>
                         <input
                             type="password"
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
-                            className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-opacity-50"
+                            className="gmail-input"
                             required
                         />
                     </div>
                     <button
                         type="submit"
                         disabled={loading}
-                        className={`w-full text-white py-2 rounded-md transition duration-300 ${bgColor} hover:opacity-90 flex justify-center items-center`}
+                        className="gmail-btn-primary w-full flex justify-center items-center mt-6"
                     >
-                        {loading ? <LoadingSpinner size="small" color="border-white" /> : 'Login'}
+                        {loading ? <LoadingSpinner size="small" color="border-white" /> : 'Sign in'}
                     </button>
                 </form>
             </div>

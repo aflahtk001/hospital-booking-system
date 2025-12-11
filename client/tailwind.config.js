@@ -7,9 +7,21 @@ export default {
     theme: {
         extend: {
             colors: {
-                primary: '#0ea5e9', // Sky 500
-                secondary: '#64748b', // Slate 500
-                accent: '#f43f5e', // Rose 500
+                primary: '#D93025', // Gmail Red
+                secondary: '#1A73E8', // Gmail Blue
+                accent: '#188038', // Gmail Green
+                gmailGray: {
+                    50: '#F8F9FA',
+                    100: '#F1F3F4',
+                    200: '#E8EAED',
+                    300: '#DADCE0',
+                    400: '#BDC1C6',
+                    500: '#9AA0A6',
+                    600: '#80868B',
+                    700: '#5F6368',
+                    800: '#3C4043',
+                    900: '#202124',
+                }
             }
         },
     },
