@@ -107,14 +107,14 @@ const DashboardDoctor = () => {
     if (loading) return <LoadingSpinner fullScreen />;
 
     return (
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-            <h1 className="text-3xl font-bold text-gray-800 mb-8">Doctor Dashboard</h1>
+        <div className="min-h-screen bg-appleGray-50 dark:bg-appleGray-800 transition-colors duration-300"><div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <h1 className="text-4xl font-semibold text-appleGray-900 dark:text-white mb-8">Doctor Dashboard</h1>
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                 {/* Appointments */}
                 <div>
-                    <h2 className="text-2xl font-semibold text-gray-700 mb-4">Upcoming Appointments</h2>
-                    <div className="bg-white shadow overflow-hidden sm:rounded-md">
+                    <h2 className="text-2xl font-semibold text-appleGray-900 dark:text-white mb-4">Upcoming Appointments</h2>
+                    <div className="apple-card shadow overflow-hidden sm:rounded-md">
                         <ul className="divide-y divide-gray-200">
                             {appointments.map((appt) => (
                                 <li key={appt._id} className="px-6 py-4">
@@ -164,11 +164,11 @@ const DashboardDoctor = () => {
 
                 {/* Schedule Management */}
                 <div>
-                    <h2 className="text-2xl font-semibold text-gray-700 mb-4">Manage Schedule</h2>
+                    <h2 className="text-2xl font-semibold text-appleGray-900 dark:text-white mb-4">Manage Schedule</h2>
 
                     {/* Current Schedule */}
                     {currentSchedule.length > 0 && (
-                        <div className="bg-white p-4 rounded-lg shadow mb-4">
+                        <div className="apple-card p-4 rounded-lg shadow mb-4">
                             <h3 className="font-semibold text-gray-700 mb-3">Current Schedule</h3>
                             <div className="space-y-2">
                                 {currentSchedule.map((sch) => (
@@ -190,12 +190,12 @@ const DashboardDoctor = () => {
                     )}
 
                     {/* Add/Update Schedule Form */}
-                    <form onSubmit={handleUpdateSchedule} className="bg-white p-6 rounded-lg shadow">
+                    <form onSubmit={handleUpdateSchedule} className="apple-card p-6 rounded-lg shadow">
                         <h3 className="font-semibold text-gray-700 mb-4">Add/Update Day Schedule</h3>
                         <div className="mb-4">
                             <label className="block text-gray-700 text-sm font-bold mb-2">Day</label>
                             <select
-                                className="w-full border p-2 rounded"
+                                className="apple-input"
                                 value={day}
                                 onChange={(e) => setDay(e.target.value)}
                             >
@@ -209,13 +209,13 @@ const DashboardDoctor = () => {
                             <input
                                 type="text"
                                 placeholder="09:00, 09:30, 10:00, 14:00, 14:30"
-                                className="w-full border p-2 rounded"
+                                className="apple-input"
                                 value={slots}
                                 onChange={(e) => setSlots(e.target.value)}
                             />
                             <p className="text-xs text-gray-500 mt-1">Enter time slots separated by commas</p>
                         </div>
-                        <button type="submit" disabled={scheduleLoading} className="w-full bg-primary text-white py-2 rounded hover:bg-sky-600 flex justify-center items-center">
+                        <button type="submit" disabled={scheduleLoading} className="w-full apple-btn-primary hover:bg-sky-600 flex justify-center items-center">
                             {scheduleLoading ? <LoadingSpinner size="small" color="border-white" /> : 'Save Schedule'}
                         </button>
                     </form>

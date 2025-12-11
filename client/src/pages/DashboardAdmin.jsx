@@ -115,8 +115,8 @@ const DashboardAdmin = () => {
     }
 
     return (
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-            <h1 className="text-3xl font-bold text-gray-800 mb-8">Admin Dashboard</h1>
+        <div className="min-h-screen bg-appleGray-50 dark:bg-appleGray-800 transition-colors duration-300"><div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <h1 className="text-4xl font-semibold text-appleGray-900 dark:text-white mb-8">Admin Dashboard</h1>
 
             <div className="flex space-x-4 mb-8 border-b">
                 {['appointments', 'doctors', 'departments'].map(tab => (
@@ -136,12 +136,12 @@ const DashboardAdmin = () => {
                         <input
                             type="text"
                             placeholder="New Department Name"
-                            className="border p-2 rounded"
+                            className="apple-input"
                             value={newDeptName}
                             onChange={(e) => setNewDeptName(e.target.value)}
                             required
                         />
-                        <button type="submit" className="bg-primary text-white px-4 py-2 rounded">Add Department</button>
+                        <button type="submit" className="apple-btn-primary">Add Department</button>
                     </form>
                     <div className="bg-white shadow rounded-lg overflow-hidden">
                         <table className="min-w-full divide-y divide-gray-200">
@@ -171,20 +171,20 @@ const DashboardAdmin = () => {
                     <form onSubmit={handleAddDoctor} className="mb-8 bg-white p-6 rounded shadow">
                         <h3 className="text-lg font-bold mb-4">Add New Doctor</h3>
                         <div className="grid grid-cols-2 gap-4">
-                            <input type="text" placeholder="Name" className="border p-2 rounded" value={newDoc.name} onChange={e => setNewDoc({ ...newDoc, name: e.target.value })} required />
-                            <input type="email" placeholder="Email" className="border p-2 rounded" value={newDoc.email} onChange={e => setNewDoc({ ...newDoc, email: e.target.value })} required />
-                            <input type="password" placeholder="Password" className="border p-2 rounded" value={newDoc.password} onChange={e => setNewDoc({ ...newDoc, password: e.target.value })} required />
-                            <select className="border p-2 rounded" value={newDoc.specialization} onChange={e => setNewDoc({ ...newDoc, specialization: e.target.value })} required>
+                            <input type="text" placeholder="Name" className="apple-input" value={newDoc.name} onChange={e => setNewDoc({ ...newDoc, name: e.target.value })} required />
+                            <input type="email" placeholder="Email" className="apple-input" value={newDoc.email} onChange={e => setNewDoc({ ...newDoc, email: e.target.value })} required />
+                            <input type="password" placeholder="Password" className="apple-input" value={newDoc.password} onChange={e => setNewDoc({ ...newDoc, password: e.target.value })} required />
+                            <select className="apple-input" value={newDoc.specialization} onChange={e => setNewDoc({ ...newDoc, specialization: e.target.value })} required>
                                 <option value="">Select Specialization</option>
                                 {departments.map(d => <option key={d._id} value={d._id}>{d.name}</option>)}
                             </select>
                             <div className="col-span-2">
                                 <label className="block text-sm font-bold mb-1">Initial Schedule (One Day)</label>
                                 <div className="flex gap-2">
-                                    <select className="border p-2 rounded" value={scheduleDay} onChange={e => setScheduleDay(e.target.value)}>
+                                    <select className="apple-input" value={scheduleDay} onChange={e => setScheduleDay(e.target.value)}>
                                         {['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'].map(d => <option key={d} value={d}>{d}</option>)}
                                     </select>
-                                    <input type="text" placeholder="Slots (e.g. 09:00, 09:30)" className="border p-2 rounded flex-grow" value={scheduleSlots} onChange={e => setScheduleSlots(e.target.value)} />
+                                    <input type="text" placeholder="Slots (e.g. 09:00, 09:30)" className="apple-input flex-grow" value={scheduleSlots} onChange={e => setScheduleSlots(e.target.value)} />
                                 </div>
                             </div>
                         </div>

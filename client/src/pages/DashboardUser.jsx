@@ -93,12 +93,12 @@ const DashboardUser = () => {
     if (loading) return <LoadingSpinner fullScreen />;
 
     return (
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-            <h1 className="text-3xl font-bold text-gray-800 mb-8">User Dashboard</h1>
+        <div className="min-h-screen bg-appleGray-50 dark:bg-appleGray-800 transition-colors duration-300"><div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <h1 className="text-4xl font-semibold text-appleGray-900 dark:text-white mb-8">User Dashboard</h1>
 
             {/* Appointments Section */}
             <div className="mb-12">
-                <h2 className="text-2xl font-semibold text-gray-700 mb-4">My Appointments</h2>
+                <h2 className="text-2xl font-semibold text-appleGray-900 dark:text-white mb-4">My Appointments</h2>
                 <div className="bg-white shadow overflow-hidden sm:rounded-md">
                     <ul className="divide-y divide-gray-200">
                         {appointments.map((appt) => (
@@ -135,7 +135,7 @@ const DashboardUser = () => {
 
             {/* Book Appointment Section */}
             <div>
-                <h2 className="text-2xl font-semibold text-gray-700 mb-4">Find a Doctor</h2>
+                <h2 className="text-2xl font-semibold text-appleGray-900 dark:text-white mb-4">Find a Doctor</h2>
                 <div className="flex gap-4 mb-6">
                     <input
                         type="text"
@@ -149,7 +149,7 @@ const DashboardUser = () => {
 
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     {doctors.map((doc) => (
-                        <div key={doc._id} className="bg-white p-6 rounded-lg shadow hover:shadow-lg transition">
+                        <div key={doc._id} className="apple-card hover:shadow-lg transition">
                             <h3 className="text-xl font-bold text-gray-800">Dr. {doc.name}</h3>
                             <p className="text-gray-600">{doc.specialization?.name}</p>
                             <p className="text-sm text-gray-500 mt-2">Available: {doc.schedule.map(s => s.day).join(', ')}</p>
