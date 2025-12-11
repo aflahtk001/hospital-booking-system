@@ -54,54 +54,57 @@ const Register = ({ role = 'user' }) => {
         }
     };
 
-    const title = role === 'doctor' ? 'Doctor Register' : 'Patient Register';
-    const bgColor = role === 'doctor' ? 'bg-accent' : 'bg-primary';
+    const title = role === 'doctor' ? 'Doctor Registration' : 'Create Account';
 
     return (
-        <div className="flex justify-center items-center min-h-[calc(100vh-64px)] bg-gray-100 py-10">
-            <div className="bg-white p-8 rounded-lg shadow-md w-96">
-                <h2 className={`text-2xl font-bold mb-6 text-center ${role === 'doctor' ? 'text-accent' : 'text-primary'}`}>
-                    {title}
-                </h2>
-                <form onSubmit={handleSubmit}>
-                    <div className="mb-4">
-                        <label className="block text-gray-700 text-sm font-bold mb-2">Name</label>
+        <div className="flex justify-center items-center min-h-[calc(100vh-64px)] bg-gmailGray-50 py-12">
+            <div className="gmail-card w-full max-w-md">
+                <div className="text-center mb-8">
+                    <div className="w-16 h-16 bg-primary rounded-full flex items-center justify-center mx-auto mb-4">
+                        <span className="text-white font-bold text-2xl">H</span>
+                    </div>
+                    <h2 className="text-2xl font-normal text-gmailGray-900 mb-2">{title}</h2>
+                    <p className="text-gmailGray-600 text-sm">Join Hospital Booking System</p>
+                </div>
+                <form onSubmit={handleSubmit} className="space-y-4">
+                    <div>
+                        <label className="block text-gmailGray-700 text-sm font-medium mb-2">Name</label>
                         <input
                             type="text"
                             value={name}
                             onChange={(e) => setName(e.target.value)}
-                            className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2"
+                            className="gmail-input"
                             required
                         />
                     </div>
-                    <div className="mb-4">
-                        <label className="block text-gray-700 text-sm font-bold mb-2">Email</label>
+                    <div>
+                        <label className="block text-gmailGray-700 text-sm font-medium mb-2">Email</label>
                         <input
                             type="email"
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
-                            className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2"
+                            className="gmail-input"
                             required
                         />
                     </div>
-                    <div className="mb-4">
-                        <label className="block text-gray-700 text-sm font-bold mb-2">Password</label>
+                    <div>
+                        <label className="block text-gmailGray-700 text-sm font-medium mb-2">Password</label>
                         <input
                             type="password"
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
-                            className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2"
+                            className="gmail-input"
                             required
                         />
                     </div>
 
                     {role === 'doctor' && (
-                        <div className="mb-4">
-                            <label className="block text-gray-700 text-sm font-bold mb-2">Specialization</label>
+                        <div>
+                            <label className="block text-gmailGray-700 text-sm font-medium mb-2">Specialization</label>
                             <select
                                 value={specialization}
                                 onChange={(e) => setSpecialization(e.target.value)}
-                                className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2"
+                                className="gmail-input"
                                 required
                             >
                                 <option value="">Select Department</option>
@@ -112,30 +115,30 @@ const Register = ({ role = 'user' }) => {
                         </div>
                     )}
 
-                    <div className="mb-4">
-                        <label className="block text-gray-700 text-sm font-bold mb-2">Phone</label>
+                    <div>
+                        <label className="block text-gmailGray-700 text-sm font-medium mb-2">Phone</label>
                         <input
                             type="text"
                             value={phone}
                             onChange={(e) => setPhone(e.target.value)}
-                            className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2"
+                            className="gmail-input"
                         />
                     </div>
-                    <div className="mb-6">
-                        <label className="block text-gray-700 text-sm font-bold mb-2">Age</label>
+                    <div>
+                        <label className="block text-gmailGray-700 text-sm font-medium mb-2">Age</label>
                         <input
                             type="number"
                             value={age}
                             onChange={(e) => setAge(e.target.value)}
-                            className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2"
+                            className="gmail-input"
                         />
                     </div>
                     <button
                         type="submit"
                         disabled={loading}
-                        className={`w-full text-white py-2 rounded-md transition duration-300 ${bgColor} hover:opacity-90 flex justify-center items-center`}
+                        className="gmail-btn-primary w-full flex justify-center items-center mt-6"
                     >
-                        {loading ? <LoadingSpinner size="small" color="border-white" /> : 'Register'}
+                        {loading ? <LoadingSpinner size="small" color="border-white" /> : 'Create Account'}
                     </button>
                 </form>
             </div>
