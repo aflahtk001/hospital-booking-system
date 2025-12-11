@@ -4,6 +4,19 @@ const { protect, doctor } = require('../middleware/authMiddleware');
 const Appointment = require('../models/Appointment');
 const Doctor = require('../models/Doctor');
 
+// @desc    Get doctor profile
+// @route   GET /api/doctors/profile
+// @access  Private/Doctor
+router.get('/profile', protect, doctor, async (req, res) => {
+    const doctorProfile = await Doctor.findById(req.user._id).populate('specialization', 'name');
+    if (doctorProfile) {
+        res.json(doctorProfile);
+    } else {
+        res.status(404);
+        throw new Error('Doctor not found');
+    }
+});
+
 // @desc    Get doctor's appointments
 // @route   GET /api/doctors/appointments/upcoming
 // @access  Private/Doctor

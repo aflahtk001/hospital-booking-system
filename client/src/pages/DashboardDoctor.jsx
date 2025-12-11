@@ -8,6 +8,7 @@ const DashboardDoctor = () => {
     const { user } = useContext(AuthContext);
     const [appointments, setAppointments] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [currentSchedule, setCurrentSchedule] = useState([]);
 
     // Schedule Form
     const [day, setDay] = useState('Monday');
@@ -25,10 +26,19 @@ const DashboardDoctor = () => {
         }
     };
 
+    const fetchSchedule = async () => {
+        try {
+            const { data } = await axios.get(`${import.meta.env.VITE_API_URL}/api/doctors/profile`, config);
+            setCurrentSchedule(data.schedule || []);
+        } catch (error) {
+            console.error(error);
+        }
+    };
+
     useEffect(() => {
         const loadData = async () => {
             setLoading(true);
-            await fetchData();
+            await Promise.all([fetchData(), fetchSchedule()]);
             setLoading(false);
         };
         loadData();
@@ -38,17 +48,48 @@ const DashboardDoctor = () => {
         e.preventDefault();
         setScheduleLoading(true);
         try {
-            const newSchedule = [{
-                day,
-                slots: slots.split(',').map(s => s.trim())
-            }];
+            // Check if day already exists in schedule
+            const existingDayIndex = currentSchedule.findIndex(s => s.day === day);
+            let updatedSchedule;
 
-            await axios.put(`${import.meta.env.VITE_API_URL}/api/doctors/schedule`, { schedule: newSchedule }, config);
-            toast.success('Schedule updated');
+            if (existingDayIndex >= 0) {
+                // Update existing day
+                updatedSchedule = [...currentSchedule];
+                updatedSchedule[existingDayIndex] = {
+                    day,
+                    slots: slots.split(',').map(s => s.trim()).filter(s => s)
+                };
+            } else {
+                // Add new day
+                updatedSchedule = [
+                    ...currentSchedule,
+                    {
+                        day,
+                        slots: slots.split(',').map(s => s.trim()).filter(s => s)
+                    }
+                ];
+            }
+
+            await axios.put(`${import.meta.env.VITE_API_URL}/api/doctors/schedule`, { schedule: updatedSchedule }, config);
+            toast.success(`Schedule ${existingDayIndex >= 0 ? 'updated' : 'added'} for ${day}`);
+            setSlots('');
+            await fetchSchedule();
         } catch (error) {
             toast.error('Failed to update schedule');
         } finally {
             setScheduleLoading(false);
+        }
+    };
+
+    const handleRemoveDay = async (dayToRemove) => {
+        if (!window.confirm(`Remove schedule for ${dayToRemove}?`)) return;
+        try {
+            const updatedSchedule = currentSchedule.filter(s => s.day !== dayToRemove);
+            await axios.put(`${import.meta.env.VITE_API_URL}/api/doctors/schedule`, { schedule: updatedSchedule }, config);
+            toast.success(`Removed schedule for ${dayToRemove}`);
+            await fetchSchedule();
+        } catch (error) {
+            toast.error('Failed to remove schedule');
         }
     };
 
@@ -69,7 +110,7 @@ const DashboardDoctor = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
             <h1 className="text-3xl font-bold text-gray-800 mb-8">Doctor Dashboard</h1>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                 {/* Appointments */}
                 <div>
                     <h2 className="text-2xl font-semibold text-gray-700 mb-4">Upcoming Appointments</h2>
@@ -123,8 +164,34 @@ const DashboardDoctor = () => {
 
                 {/* Schedule Management */}
                 <div>
-                    <h2 className="text-2xl font-semibold text-gray-700 mb-4">Update Schedule</h2>
+                    <h2 className="text-2xl font-semibold text-gray-700 mb-4">Manage Schedule</h2>
+
+                    {/* Current Schedule */}
+                    {currentSchedule.length > 0 && (
+                        <div className="bg-white p-4 rounded-lg shadow mb-4">
+                            <h3 className="font-semibold text-gray-700 mb-3">Current Schedule</h3>
+                            <div className="space-y-2">
+                                {currentSchedule.map((sch) => (
+                                    <div key={sch.day} className="flex justify-between items-start p-2 bg-gray-50 rounded">
+                                        <div>
+                                            <p className="font-medium text-gray-800">{sch.day}</p>
+                                            <p className="text-sm text-gray-600">{sch.slots.join(', ')}</p>
+                                        </div>
+                                        <button
+                                            onClick={() => handleRemoveDay(sch.day)}
+                                            className="text-red-500 hover:text-red-700 text-sm"
+                                        >
+                                            Remove
+                                        </button>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    )}
+
+                    {/* Add/Update Schedule Form */}
                     <form onSubmit={handleUpdateSchedule} className="bg-white p-6 rounded-lg shadow">
+                        <h3 className="font-semibold text-gray-700 mb-4">Add/Update Day Schedule</h3>
                         <div className="mb-4">
                             <label className="block text-gray-700 text-sm font-bold mb-2">Day</label>
                             <select
@@ -141,14 +208,15 @@ const DashboardDoctor = () => {
                             <label className="block text-gray-700 text-sm font-bold mb-2">Available Slots (comma separated)</label>
                             <input
                                 type="text"
-                                placeholder="09:00, 09:30, 10:00"
+                                placeholder="09:00, 09:30, 10:00, 14:00, 14:30"
                                 className="w-full border p-2 rounded"
                                 value={slots}
                                 onChange={(e) => setSlots(e.target.value)}
                             />
+                            <p className="text-xs text-gray-500 mt-1">Enter time slots separated by commas</p>
                         </div>
                         <button type="submit" disabled={scheduleLoading} className="w-full bg-primary text-white py-2 rounded hover:bg-sky-600 flex justify-center items-center">
-                            {scheduleLoading ? <LoadingSpinner size="small" color="border-white" /> : 'Update Schedule'}
+                            {scheduleLoading ? <LoadingSpinner size="small" color="border-white" /> : 'Save Schedule'}
                         </button>
                     </form>
                 </div>
