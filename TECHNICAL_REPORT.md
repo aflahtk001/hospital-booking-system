@@ -713,10 +713,7 @@ VITE_API_URL=http://localhost:5000
 
 **Backend (.env)**:
 ```
-MONGO_URI=mongodb+srv://user:pass@cluster.mongodb.net/
-JWT_SECRET=supersecretkey123
-PORT=5000
-NODE_ENV=development
+ 
 ```
 
 ### 6.2 API Request Flow
