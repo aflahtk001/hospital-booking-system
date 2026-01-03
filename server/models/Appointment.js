@@ -31,6 +31,22 @@ const appointmentSchema = new mongoose.Schema({
         default: 'Pending',
         enum: ['Pending', 'Confirmed', 'Cancelled', 'Completed', 'Rejected'],
     },
+    // Advanced Queue Fields
+    queueStatus: {
+        type: String,
+        default: 'Pending', // Pending -> Approved (in queue) -> Active (serving) -> Completed/Skipped
+        enum: ['Pending', 'Approved', 'Active', 'Completed', 'Skipped', 'Cancelled'],
+    },
+    startTime: Date, // When status became Active
+    endTime: Date,   // When status became Completed
+    skipReason: String,
+    isEmergency: {
+        type: Boolean,
+        default: false,
+    },
+    estimatedDuration: {
+        type: Number, // In minutes, override default if needed
+    },
 }, { timestamps: true });
 
 module.exports = mongoose.model('Appointment', appointmentSchema);

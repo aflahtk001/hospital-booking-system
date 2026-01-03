@@ -1,13 +1,17 @@
 import { useState, useEffect, useContext } from 'react';
 import axios from 'axios';
 import AuthContext from '../context/AuthContext';
+import { useSocket } from '../context/SocketContext';
 import { toast } from 'react-toastify';
 import LoadingSpinner from '../components/LoadingSpinner';
 import DashboardLayout from '../components/DashboardLayout';
-import { FiArrowUpRight, FiPlus } from 'react-icons/fi';
+import { FiArrowUpRight, FiPlus, FiClock } from 'react-icons/fi';
 
 const DashboardUser = () => {
     const { user } = useContext(AuthContext);
+
+    if (!user) return <LoadingSpinner fullScreen />;
+    const { socket } = useSocket();
     const [doctors, setDoctors] = useState([]);
     const [appointments, setAppointments] = useState([]);
     const [searchName, setSearchName] = useState('');
@@ -18,24 +22,19 @@ const DashboardUser = () => {
     const [bookDate, setBookDate] = useState('');
     const [bookSlot, setBookSlot] = useState('');
 
+    // Live Queue State
+    const [liveQueueState, setLiveQueueState] = useState(null);
+
     const config = { headers: { Authorization: `Bearer ${user.token}` } };
 
-    const fetchDoctors = async () => {
+    const fetchData = async () => {
         try {
-            const { data } = await axios.get(`${import.meta.env.VITE_API_URL}/api/users/doctors`, {
-                ...config,
-                params: { name: searchName }
-            });
-            setDoctors(data);
-        } catch (error) {
-            console.error(error);
-        }
-    };
-
-    const fetchAppointments = async () => {
-        try {
-            const { data } = await axios.get(`${import.meta.env.VITE_API_URL}/api/appointments/my`, config);
-            setAppointments(data);
+            const [docsRes, apptsRes] = await Promise.all([
+                axios.get(`${import.meta.env.VITE_API_URL}/api/users/doctors`, { ...config, params: { name: searchName } }),
+                axios.get(`${import.meta.env.VITE_API_URL}/api/appointments/my`, config)
+            ]);
+            setDoctors(docsRes.data);
+            setAppointments(apptsRes.data);
         } catch (error) {
             console.error(error);
         }
@@ -44,11 +43,25 @@ const DashboardUser = () => {
     useEffect(() => {
         const loadData = async () => {
             setLoading(true);
-            await Promise.all([fetchDoctors(), fetchAppointments()]);
+            await fetchData();
             setLoading(false);
         };
         loadData();
-    }, [searchName]);
+
+        if (socket) {
+            socket.on('queue_update', (data) => {
+                // If it's my appointment or a queue I'm in
+                fetchData();
+                if (data.status === 'Next Called' || data.queueStatus) {
+                    toast.info(`Queue Update: ${data.status}`);
+                }
+            });
+
+            return () => {
+                socket.off('queue_update');
+            };
+        }
+    }, [searchName, socket]);
 
     const handleBook = async (e) => {
         e.preventDefault();
@@ -60,9 +73,9 @@ const DashboardUser = () => {
                 date: bookDate,
                 timeSlot: bookSlot
             }, config);
-            toast.success('Appointment booked successfully!');
+            toast.success('Appointment booked!');
             setShowBookingModal(false);
-            fetchAppointments();
+            fetchData();
         } catch (error) {
             toast.error(error.response?.data?.message || 'Booking failed');
         } finally {
@@ -75,94 +88,125 @@ const DashboardUser = () => {
         setShowBookingModal(true);
     };
 
-    // Removed dummy analytics data
-
     if (loading) return <LoadingSpinner fullScreen />;
 
+    // Logic to find "Active" appointment (highest priority one for the user)
+    // 1. In Progress (Active)
+    // 2. Approved (Waiting)
+    // 3. Pending
+    const activeAppointment = appointments.find(a => a.queueStatus === 'Active') ||
+        appointments.find(a => a.queueStatus === 'Approved') ||
+        appointments.find(a => a.status === 'Pending');
+
     return (
-        <DashboardLayout>
-            <div className="mb-8">
-                <div className="flex justify-between items-end mb-6">
-                    <div>
-                        <h1 className="text-3xl font-bold text-gray-900 mb-2">Dashboard</h1>
-                        <p className="text-gray-500">Plan, prioritize, and accomplish your medical appointments with ease.</p>
-                    </div>
-                    <div className="flex gap-4">
-                        <button className="btn-primary group">
-                            <FiPlus className="group-hover:rotate-90 transition-transform duration-300" />
-                            New Appointment
-                        </button>
+        <DashboardLayout title="Patient Dashboard" subtitle={`Welcome back, ${user.name}`}>
+
+            {/* Live Queue Status Widget */}
+            {activeAppointment && activeAppointment.queueStatus === 'Active' && (
+                <div className="mb-8 p-6 bg-gradient-to-r from-green-500 to-emerald-600 rounded-2xl text-white shadow-xl animate-pulse">
+                    <div className="flex justify-between items-center">
+                        <div>
+                            <h2 className="text-2xl font-bold mb-1">It's Your Turn!</h2>
+                            <p className="opacity-90">Please proceed to Dr. {activeAppointment.doctor?.name}'s room.</p>
+                        </div>
+                        <div className="bg-white/20 px-6 py-3 rounded-xl backdrop-blur-sm">
+                            <p className="text-xs uppercase font-bold text-white/80">Token Number</p>
+                            <p className="text-4xl font-mono font-bold">#{activeAppointment.tokenNumber}</p>
+                        </div>
                     </div>
                 </div>
+            )}
 
-                {/* Stats Cards */}
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-                    {/* Primary Card */}
-                    <div className="bg-primary rounded-3xl p-6 text-white relative overflow-hidden">
-                        <div className="flex justify-between items-start mb-4">
-                            <span className="text-emerald-100 font-medium">Total Appointments</span>
-                            <div className="bg-white/20 p-2 rounded-full transform rotate-45">
-                                <FiArrowUpRight className="w-4 h-4" />
+            {activeAppointment && activeAppointment.queueStatus === 'Approved' && (
+                <div className="mb-8 p-6 bg-gradient-to-r from-blue-600 to-indigo-700 rounded-2xl text-white shadow-xl">
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div className="md:col-span-1">
+                            <p className="text-blue-200 text-xs font-bold uppercase tracking-wide mb-1">My Token</p>
+                            <div className="text-5xl font-mono font-bold">#{activeAppointment.tokenNumber}</div>
+                            <p className="text-sm mt-2 text-blue-100">Dr. {activeAppointment.doctor?.name}</p>
+                        </div>
+                        <div className="md:col-span-2 flex justify-around items-center bg-white/10 rounded-xl p-4 backdrop-blur-sm">
+                            <div className="text-center">
+                                <p className="text-blue-200 text-xs uppercase mb-1">People Ahead</p>
+                                <p className="text-3xl font-bold">{activeAppointment.peopleAhead || 0}</p>
+                            </div>
+                            <div className="h-10 w-px bg-white/20"></div>
+                            <div className="text-center">
+                                <p className="text-blue-200 text-xs uppercase mb-1">Est. Wait Time</p>
+                                <p className="text-3xl font-bold">{activeAppointment.estimatedWaitTime || 0}<span className="text-sm font-normal">m</span></p>
                             </div>
                         </div>
-                        <h2 className="text-4xl font-bold mb-4">{appointments.length}</h2>
-                        <div className="flex items-center gap-2 text-xs text-emerald-100 bg-white/10 px-2 py-1 rounded w-fit">
-                            <span className="bg-emerald-400 text-primary px-1 rounded text-[10px] font-bold">5%</span>
-                            <span>Increased from last month</span>
+                    </div>
+                    {/* Progress Bar Visual */}
+                    <div className="mt-6">
+                        <div className="flex justify-between text-xs text-blue-200 mb-2">
+                            <span>Now Serving</span>
+                            <span>Your Turn</span>
+                        </div>
+                        <div className="h-2 bg-blue-900/30 rounded-full overflow-hidden">
+                            <div className="h-full bg-blue-400 rounded-full animate-pulse"
+                                style={{ width: `${Math.max(10, 100 - ((activeAppointment.peopleAhead || 0) * 10))}%` }}></div>
                         </div>
                     </div>
+                </div>
+            )}
 
-                    {/* Stat Cards */}
-                    {[
-                        { label: 'Upcoming', value: appointments.filter(a => new Date(a.date) > new Date()).length, sub: 'Next 7 days' },
-                        { label: 'Completed', value: appointments.filter(a => a.status === 'Completed').length, sub: 'Total history' },
-                        { label: 'Pending', value: appointments.filter(a => a.status === 'Pending').length, sub: 'Awaiting approval' }
-                    ].map((stat, i) => (
-                        <div key={i} className="modern-card">
-                            <div className="flex justify-between items-start mb-4">
-                                <span className="text-gray-500 font-medium">{stat.label}</span>
-                                <div className="border border-gray-200 p-2 rounded-full transform rotate-45">
-                                    <FiArrowUpRight className="w-4 h-4 text-gray-400" />
+            <div className="min-h-screen">
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                    {/* Stats & Appointments */}
+                    <div className="lg:col-span-2 space-y-8">
+                        {/* Stats Cards (Simplified for space) */}
+                        <div className="grid grid-cols-2 gap-4">
+                            <div className="modern-card bg-primary text-white border-none p-4">
+                                <div className="flex justify-between">
+                                    <div>
+                                        <p className="text-2xl font-bold">{appointments.length}</p>
+                                        <p className="text-xs opacity-80">Total Appointments</p>
+                                    </div>
+                                    <FiArrowUpRight className="opacity-50" />
                                 </div>
                             </div>
-                            <h2 className="text-4xl font-bold text-gray-900 mb-4">{stat.value}</h2>
-                            <div className="flex items-center gap-2 text-xs text-gray-400 bg-gray-50 px-2 py-1 rounded w-fit">
-                                {i === 0 ? <span className="bg-primary/20 text-primary px-1 rounded text-[10px] font-bold">New</span> : null}
-                                <span>{stat.sub}</span>
+                            <div className="modern-card p-4">
+                                <div className="flex justify-between">
+                                    <div>
+                                        <p className="text-2xl font-bold text-gray-800">
+                                            {appointments.filter(a => a.status === 'Pending').length}
+                                        </p>
+                                        <p className="text-xs text-gray-500">Pending Approval</p>
+                                    </div>
+                                    <FiArrowUpRight className="text-gray-300" />
+                                </div>
                             </div>
                         </div>
-                    ))}
-                </div>
 
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                    {/* Appointments List */}
-                    <div>
-                        <div className="flex justify-between items-center mb-6">
-                            <h3 className="text-xl font-bold text-gray-900">Your Appointments</h3>
-                            <button className="text-primary text-sm font-semibold hover:underline" onClick={() => fetchAppointments()}>Refresh</button>
-                        </div>
-                        <div className="modern-card p-0 overflow-hidden">
-                            <ul className="divide-y divide-gray-100">
-                                {appointments.map((appt) => (
-                                    <li key={appt._id} className="p-6 hover:bg-gray-50 transition-colors">
-                                        <div className="flex items-center justify-between">
-                                            <div>
-                                                <p className="font-bold text-gray-900">{appt.doctor?.name}</p>
-                                                <p className="text-xs text-gray-500">
-                                                    {new Date(appt.date).toLocaleDateString()} at {appt.timeSlot}
-                                                </p>
+                        {/* Upcoming Appointments List */}
+                        <div className="modern-card p-6">
+                            <h3 className="text-xl font-bold text-gray-900 mb-4">Your Appointments</h3>
+                            <div className="space-y-4">
+                                {appointments.map(apt => (
+                                    <div key={apt._id} className="p-4 rounded-xl bg-gray-50 flex justify-between items-center group hover:shadow-md transition-all">
+                                        <div className="flex items-center gap-4">
+                                            <div className="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-bold text-lg">
+                                                {new Date(apt.date).getDate()}
                                             </div>
-                                            <span className={`px-2 py-1 text-[10px] font-bold uppercase tracking-wider rounded-md
-                                                ${appt.status === 'Confirmed' ? 'bg-green-100 text-green-700' :
-                                                    appt.status === 'Cancelled' ? 'bg-red-100 text-red-700' :
-                                                        'bg-yellow-100 text-yellow-700'}`}>
-                                                {appt.status}
-                                            </span>
+                                            <div>
+                                                <h4 className="font-semibold text-gray-900">Dr. {apt.doctor?.name}</h4>
+                                                <p className="text-xs text-gray-500">{new Date(apt.date).toLocaleDateString()} • {apt.timeSlot}</p>
+                                            </div>
                                         </div>
-                                    </li>
+                                        <div className="text-right">
+                                            <span className={`px-2 py-1 rounded text-xs font-bold uppercase
+                                            ${apt.queueStatus === 'Active' ? 'bg-green-100 text-green-700 animate-pulse' :
+                                                    apt.queueStatus === 'Approved' ? 'bg-blue-100 text-blue-700' :
+                                                        apt.status === 'Pending' ? 'bg-yellow-100 text-yellow-700' : 'bg-gray-100 text-gray-500'}`}>
+                                                {apt.queueStatus === 'Pending' ? apt.status : apt.queueStatus}
+                                            </span>
+                                            {apt.tokenNumber && <p className="text-xs font-mono font-bold mt-1">Token #{apt.tokenNumber}</p>}
+                                        </div>
+                                    </div>
                                 ))}
-                                {appointments.length === 0 && <li className="p-6 text-center text-gray-500">No appointments found.</li>}
-                            </ul>
+                                {appointments.length === 0 && <p className="text-center text-gray-400 py-8">No appointments yet.</p>}
+                            </div>
                         </div>
                     </div>
 
@@ -224,13 +268,17 @@ const DashboardUser = () => {
                                         onChange={(e) => setBookSlot(e.target.value)}
                                     >
                                         <option value="">Select Slot</option>
-                                        {selectedDoctor.schedule.map(sch => (
-                                            <optgroup key={sch.day} label={sch.day}>
-                                                {sch.slots.map(slot => (
-                                                    <option key={`${sch.day}-${slot}`} value={slot}>{slot} ({sch.day})</option>
-                                                ))}
-                                            </optgroup>
-                                        ))}
+                                        {selectedDoctor.schedule && selectedDoctor.schedule.length > 0 ? (
+                                            selectedDoctor.schedule.map(sch => (
+                                                <optgroup key={sch.day} label={sch.day}>
+                                                    {sch.slots.map(slot => (
+                                                        <option key={`${sch.day}-${slot}`} value={slot}>{slot} ({sch.day})</option>
+                                                    ))}
+                                                </optgroup>
+                                            ))
+                                        ) : (
+                                            <option disabled>No slots available</option>
+                                        )}
                                     </select>
                                 </div>
                                 <div className="flex justify-end gap-3">

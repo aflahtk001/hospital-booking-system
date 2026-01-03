@@ -21,38 +21,34 @@ const PublicLayout = () => {
   );
 };
 
+import { SocketProvider } from './context/SocketContext';
+
 function App() {
   return (
     <DarkModeProvider>
       <AuthProvider>
-        <Router>
-          <div className="min-h-screen bg-white dark:bg-gray-800 transition-colors duration-300">
-            <Routes>
-              {/* Public Routes with Navbar */}
-              <Route element={<PublicLayout />}>
-                <Route path="/" element={<Home />} />
+        <SocketProvider>
+          <Router>
+            <div className="min-h-screen bg-white dark:bg-gray-800 transition-colors duration-300">
+              <Routes>
+                {/* Public Routes with Navbar */}
+                <Route element={<PublicLayout />}>
+                  <Route path="/" element={<Home />} />
 
-                {/* Generic Routes */}
-                <Route path="/login" element={<Login />} />
-                <Route path="/register" element={<Register />} />
+                  {/* Unified Auth Routes */}
+                  <Route path="/login" element={<Login />} />
+                  <Route path="/register" element={<Register />} />
+                </Route>
 
-                {/* Role Specific Routes */}
-                <Route path="/login/user" element={<Login role="user" />} />
-                <Route path="/login/doctor" element={<Login role="doctor" />} />
-                <Route path="/login/admin" element={<Login role="admin" />} />
-
-                <Route path="/register/user" element={<Register role="user" />} />
-                <Route path="/register/doctor" element={<Register role="doctor" />} />
-              </Route>
-
-              {/* Dashboard Routes - Layout handled internally */}
-              <Route path="/dashboard" element={<DashboardUser />} />
-              <Route path="/doctor-dashboard" element={<DashboardDoctor />} />
-              <Route path="/admin-dashboard" element={<DashboardAdmin />} />
-            </Routes>
-            <ToastContainer />
-          </div>
-        </Router>
+                {/* Dashboard Routes - Layout handled internally */}
+                <Route path="/dashboard" element={<DashboardUser />} />
+                <Route path="/doctor-dashboard" element={<DashboardDoctor />} />
+                <Route path="/admin-dashboard" element={<DashboardAdmin />} />
+              </Routes>
+              <ToastContainer />
+            </div>
+          </Router>
+        </SocketProvider>
       </AuthProvider>
     </DarkModeProvider>
   );

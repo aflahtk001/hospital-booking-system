@@ -57,14 +57,14 @@ const seedData = async () => {
         await User.deleteMany();
         const adminUser = await User.create({
             name: 'Admin User',
-            email: 'admin', // Using 'admin' as username in the email field
-            password: 'admin@123',
+            email: 'admin@gmail.com',
+            password: 'password', // Model will hash this
             role: 'admin',
             phone: '1234567890',
             age: 30
         });
 
-        console.log('Admin Created: admin@example.com / password123');
+        console.log('Admin Created: admin@gmail.com / password');
 
         // Create Department
         const cardio = await Department.create({ name: 'Cardiology' });

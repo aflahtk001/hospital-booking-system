@@ -20,6 +20,12 @@ const doctorSchema = new mongoose.Schema({
         ref: 'Department',
         required: true,
     },
+    // Queue State
+    queueState: {
+        isPaused: { type: Boolean, default: false },
+        currentActiveToken: { type: Number, default: 0 },
+        averageConsultationTime: { type: Number, default: 15 }, // in minutes
+    },
     schedule: [{
         day: {
             type: String, // e.g., 'Monday'

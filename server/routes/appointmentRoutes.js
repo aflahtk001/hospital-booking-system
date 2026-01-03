@@ -51,10 +51,39 @@ router.post('/book', protect, async (req, res) => {
 // @access  Private
 router.get('/my', protect, async (req, res) => {
     const appointments = await Appointment.find({ user: req.user._id })
-        .populate('doctor', 'name')
+        .populate('doctor', 'name queueState') // Get doctor's queue state
         .populate('department', 'name')
         .sort({ date: -1 });
-    res.json(appointments);
+
+    // Calculate dynamic queue info for each appointment
+    const appointmentsWithQueue = await Promise.all(appointments.map(async (apt) => {
+        const aptObj = apt.toObject();
+
+        if (apt.queueStatus === 'Approved' || apt.status === 'Pending') {
+            const startOfDay = new Date(apt.date);
+            startOfDay.setHours(0, 0, 0, 0);
+            const endOfDay = new Date(apt.date);
+            endOfDay.setHours(23, 59, 59, 999);
+
+            // Count approved people ahead
+            const peopleAhead = await Appointment.countDocuments({
+                doctor: apt.doctor._id,
+                date: { $gte: startOfDay, $lte: endOfDay },
+                queueStatus: { $in: ['Approved', 'Active'] },
+                tokenNumber: { $lt: apt.tokenNumber || 999999 }
+            });
+
+            // Avg time from doctor status or default 15
+            const avgTime = apt.doctor.queueState?.averageConsultationTime || 15;
+
+            aptObj.peopleAhead = peopleAhead;
+            aptObj.estimatedWaitTime = peopleAhead * avgTime;
+        }
+
+        return aptObj;
+    }));
+
+    res.json(appointmentsWithQueue);
 });
 
 // @desc    Cancel appointment

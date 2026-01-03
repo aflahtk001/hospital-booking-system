@@ -5,12 +5,13 @@ import { toast } from 'react-toastify';
 import axios from 'axios';
 import LoadingSpinner from '../components/LoadingSpinner';
 
-const Register = ({ role = 'user' }) => {
+const Register = () => {
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [phone, setPhone] = useState('');
     const [age, setAge] = useState('');
+    const [isDoctor, setIsDoctor] = useState(false);
     const [loading, setLoading] = useState(false);
 
     // Doctor specific
@@ -21,7 +22,7 @@ const Register = ({ role = 'user' }) => {
     const navigate = useNavigate();
 
     useEffect(() => {
-        if (role === 'doctor') {
+        if (isDoctor) {
             const fetchDepts = async () => {
                 try {
                     const { data } = await axios.get(`${import.meta.env.VITE_API_URL}/api/auth/departments`);
@@ -32,14 +33,15 @@ const Register = ({ role = 'user' }) => {
             };
             fetchDepts();
         }
-    }, [role]);
+    }, [isDoctor]);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         setLoading(true);
+        const role = isDoctor ? 'doctor' : 'user';
         const userData = { name, email, password, phone, age, role };
 
-        if (role === 'doctor') {
+        if (isDoctor) {
             userData.specialization = specialization;
         }
 
@@ -47,23 +49,39 @@ const Register = ({ role = 'user' }) => {
         setLoading(false);
         if (res.success) {
             toast.success('Registered successfully');
-            if (role === 'doctor') navigate('/doctor-dashboard');
+            if (isDoctor) navigate('/doctor-dashboard');
             else navigate('/dashboard');
         } else {
             toast.error(res.message);
         }
     };
 
-    const title = role === 'doctor' ? 'Doctor Registration' : 'Create Account';
-
     return (
         <div className="flex justify-center items-center min-h-[calc(100vh-64px)] bg-gray-50 dark:bg-gray-800 py-12 transition-colors duration-300">
             <div className="modern-card w-full max-w-md">
                 <div className="text-center mb-8">
-                    <h2 className="text-3xl font-semibold text-gray-900 dark:text-white mb-2">{title}</h2>
+                    <h2 className="text-3xl font-semibold text-gray-900 dark:text-white mb-2">Create Account</h2>
                     <p className="text-gray-600 dark:text-gray-300 text-sm">Join Hospital Booking System</p>
                 </div>
                 <form onSubmit={handleSubmit} className="space-y-4">
+                    {/* Role Toggle */}
+                    <div className="flex items-center justify-center gap-3 mb-6 bg-gray-100 p-1 rounded-lg w-max mx-auto">
+                        <button
+                            type="button"
+                            onClick={() => setIsDoctor(false)}
+                            className={`px-4 py-2 rounded-md text-sm font-medium transition-all ${!isDoctor ? 'bg-white text-primary shadow-sm' : 'text-gray-500 hover:text-gray-900'}`}
+                        >
+                            Patient
+                        </button>
+                        <button
+                            type="button"
+                            onClick={() => setIsDoctor(true)}
+                            className={`px-4 py-2 rounded-md text-sm font-medium transition-all ${isDoctor ? 'bg-white text-primary shadow-sm' : 'text-gray-500 hover:text-gray-900'}`}
+                        >
+                            Doctor
+                        </button>
+                    </div>
+
                     <div>
                         <label className="block text-gray-700 dark:text-gray-200 text-sm font-medium mb-2">Name</label>
                         <input
@@ -95,7 +113,7 @@ const Register = ({ role = 'user' }) => {
                         />
                     </div>
 
-                    {role === 'doctor' && (
+                    {isDoctor && (
                         <div>
                             <label className="block text-gray-700 dark:text-gray-200 text-sm font-medium mb-2">Specialization</label>
                             <select
@@ -137,6 +155,12 @@ const Register = ({ role = 'user' }) => {
                     >
                         {loading ? <LoadingSpinner size="small" color="border-white" /> : 'Create Account'}
                     </button>
+
+                    <div className="text-center mt-4">
+                        <p className="text-sm text-gray-600 dark:text-gray-400">
+                            Already have an account? <span onClick={() => navigate('/login')} className="text-primary hover:underline cursor-pointer">Sign in</span>
+                        </p>
+                    </div>
                 </form>
             </div>
         </div>

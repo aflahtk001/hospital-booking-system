@@ -15,12 +15,11 @@ export const AuthProvider = ({ children }) => {
         setLoading(false);
     }, []);
 
-    const login = async (email, password, role) => {
+    const login = async (email, password) => {
         try {
             const { data } = await axios.post(`${import.meta.env.VITE_API_URL}/api/auth/login`, {
                 email,
                 password,
-                role,
             });
             setUser(data);
             localStorage.setItem('userInfo', JSON.stringify(data));
