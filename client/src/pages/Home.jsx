@@ -2,14 +2,14 @@ import { Link } from 'react-router-dom';
 
 const Home = () => {
     return (
-        <div className="min-h-[calc(100vh-64px)] bg-white dark:bg-appleGray-800 transition-colors duration-300">
+        <div className="min-h-[calc(100vh-64px)] bg-white dark:bg-gray-800 transition-colors duration-300">
             {/* Hero Section */}
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
                 <div className="text-center">
-                    <h1 className="text-6xl md:text-7xl font-bold text-appleGray-900 dark:text-white mb-6 tracking-tight">
+                    <h1 className="text-6xl md:text-7xl font-bold text-gray-900 dark:text-white mb-6 tracking-tight">
                         Hospital Booking
                     </h1>
-                    <p className="text-xl md:text-2xl text-appleGray-600 dark:text-appleGray-300 mb-12 max-w-3xl mx-auto font-light">
+                    <p className="text-xl md:text-2xl text-gray-600 dark:text-gray-300 mb-12 max-w-3xl mx-auto font-light">
                         Book appointments with ease. Manage your healthcare schedule seamlessly.
                     </p>
                 </div>
@@ -17,22 +17,22 @@ const Home = () => {
                 {/* Role Cards */}
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-16 max-w-6xl mx-auto">
                     {/* Patient Card */}
-                    <div className="apple-card hover:shadow-lg transition-shadow duration-300">
+                    <div className="modern-card hover:shadow-lg transition-shadow duration-300">
                         <div className="text-center">
                             <div className="w-16 h-16 bg-gradient-to-br from-primary to-blue-600 rounded-2xl flex items-center justify-center mx-auto mb-6">
                                 <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                                 </svg>
                             </div>
-                            <h2 className="text-2xl font-semibold text-appleGray-900 dark:text-white mb-3">Patient</h2>
-                            <p className="text-appleGray-600 dark:text-appleGray-300 mb-6">
+                            <h2 className="text-2xl font-semibold text-gray-900 dark:text-white mb-3">Patient</h2>
+                            <p className="text-gray-600 dark:text-gray-300 mb-6">
                                 Book appointments and manage your health
                             </p>
                             <div className="space-y-3">
-                                <Link to="/login/user" className="block apple-btn-primary text-center">
+                                <Link to="/login/user" className="block btn-primary text-center">
                                     Sign in
                                 </Link>
-                                <Link to="/register/user" className="block apple-btn-secondary text-center">
+                                <Link to="/register/user" className="block btn-secondary text-center">
                                     Register
                                 </Link>
                             </div>
@@ -40,22 +40,22 @@ const Home = () => {
                     </div>
 
                     {/* Doctor Card */}
-                    <div className="apple-card hover:shadow-lg transition-shadow duration-300">
+                    <div className="modern-card hover:shadow-lg transition-shadow duration-300">
                         <div className="text-center">
                             <div className="w-16 h-16 bg-gradient-to-br from-accent to-green-600 rounded-2xl flex items-center justify-center mx-auto mb-6">
                                 <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                                 </svg>
                             </div>
-                            <h2 className="text-2xl font-semibold text-appleGray-900 dark:text-white mb-3">Doctor</h2>
-                            <p className="text-appleGray-600 dark:text-appleGray-300 mb-6">
+                            <h2 className="text-2xl font-semibold text-gray-900 dark:text-white mb-3">Doctor</h2>
+                            <p className="text-gray-600 dark:text-gray-300 mb-6">
                                 Manage appointments and schedules
                             </p>
                             <div className="space-y-3">
-                                <Link to="/login/doctor" className="block apple-btn-primary text-center">
+                                <Link to="/login/doctor" className="block btn-primary text-center">
                                     Sign in
                                 </Link>
-                                <Link to="/register/doctor" className="block apple-btn-secondary text-center">
+                                <Link to="/register/doctor" className="block btn-secondary text-center">
                                     Register
                                 </Link>
                             </div>
@@ -63,7 +63,7 @@ const Home = () => {
                     </div>
 
                     {/* Admin Card */}
-                    <div className="apple-card hover:shadow-lg transition-shadow duration-300">
+                    <div className="modern-card hover:shadow-lg transition-shadow duration-300">
                         <div className="text-center">
                             <div className="w-16 h-16 bg-gradient-to-br from-secondary to-purple-600 rounded-2xl flex items-center justify-center mx-auto mb-6">
                                 <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -71,12 +71,12 @@ const Home = () => {
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                                 </svg>
                             </div>
-                            <h2 className="text-2xl font-semibold text-appleGray-900 dark:text-white mb-3">Admin</h2>
-                            <p className="text-appleGray-600 dark:text-appleGray-300 mb-6">
+                            <h2 className="text-2xl font-semibold text-gray-900 dark:text-white mb-3">Admin</h2>
+                            <p className="text-gray-600 dark:text-gray-300 mb-6">
                                 Manage system and operations
                             </p>
                             <div className="space-y-3">
-                                <Link to="/login/admin" className="block apple-btn-primary text-center">
+                                <Link to="/login/admin" className="block btn-primary text-center">
                                     Sign in
                                 </Link>
                             </div>

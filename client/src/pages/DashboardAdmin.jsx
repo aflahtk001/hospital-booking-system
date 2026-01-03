@@ -3,6 +3,8 @@ import axios from 'axios';
 import AuthContext from '../context/AuthContext';
 import { toast } from 'react-toastify';
 import LoadingSpinner from '../components/LoadingSpinner';
+import DashboardLayout from '../components/DashboardLayout';
+import { FiUsers, FiActivity, FiBriefcase, FiTrash2, FiPlus } from 'react-icons/fi';
 
 const DashboardAdmin = () => {
     const { user } = useContext(AuthContext);
@@ -115,144 +117,198 @@ const DashboardAdmin = () => {
     }
 
     return (
-        <div className="min-h-screen bg-appleGray-50 dark:bg-appleGray-800 transition-colors duration-300"><div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-            <h1 className="text-4xl font-semibold text-appleGray-900 dark:text-white mb-8">Admin Dashboard</h1>
+        <DashboardLayout>
+            <div className="mb-8">
+                <h1 className="text-3xl font-bold text-gray-900 mb-2">Admin Dashboard</h1>
+                <p className="text-gray-500">System overview and management.</p>
+            </div>
 
-            <div className="flex space-x-4 mb-8 border-b">
+            {/* Stats */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                <div className="modern-card">
+                    <div className="flex justify-between items-center mb-4">
+                        <div className="p-3 bg-blue-100 rounded-2xl">
+                            <FiUsers className="w-6 h-6 text-primary" />
+                        </div>
+                    </div>
+                    <div className="text-3xl font-bold mb-1 text-gray-900">{doctors.length}</div>
+                    <div className="text-gray-500 text-sm">Total Doctors</div>
+                </div>
+                <div className="modern-card">
+                    <div className="flex justify-between items-center mb-4">
+                        <div className="p-3 bg-green-100 rounded-2xl">
+                            <FiActivity className="w-6 h-6 text-green-700" />
+                        </div>
+                    </div>
+                    <div className="text-3xl font-bold mb-1 text-gray-900">{appointments.length}</div>
+                    <div className="text-gray-500 text-sm">Total Appointments</div>
+                </div>
+                <div className="modern-card">
+                    <div className="flex justify-between items-center mb-4">
+                        <div className="p-3 bg-purple-100 rounded-2xl">
+                            <FiBriefcase className="w-6 h-6 text-purple-700" />
+                        </div>
+                    </div>
+                    <div className="text-3xl font-bold mb-1 text-gray-900">{departments.length}</div>
+                    <div className="text-gray-500 text-sm">Departments</div>
+                </div>
+            </div>
+
+            {/* Tabs */}
+            <div className="flex space-x-2 mb-8 bg-white p-1 rounded-xl w-fit shadow-sm border border-gray-100">
                 {['appointments', 'doctors', 'departments'].map(tab => (
                     <button
                         key={tab}
                         onClick={() => setActiveTab(tab)}
-                        className={`py-2 px-4 capitalize font-semibold ${activeTab === tab ? 'border-b-2 border-primary text-primary' : 'text-gray-500'}`}
+                        className={`py-2 px-6 capitalize font-medium rounded-lg transition-all ${activeTab === tab
+                                ? 'bg-primary text-white shadow-md'
+                                : 'text-gray-500 hover:bg-gray-50'
+                            }`}
                     >
                         {tab}
                     </button>
                 ))}
             </div>
 
-            {activeTab === 'departments' && (
-                <div>
-                    <form onSubmit={handleAddDept} className="mb-8 flex gap-4">
-                        <input
-                            type="text"
-                            placeholder="New Department Name"
-                            className="apple-input"
-                            value={newDeptName}
-                            onChange={(e) => setNewDeptName(e.target.value)}
-                            required
-                        />
-                        <button type="submit" className="apple-btn-primary">Add Department</button>
-                    </form>
-                    <div className="bg-white shadow rounded-lg overflow-hidden">
-                        <table className="min-w-full divide-y divide-gray-200">
-                            <thead className="bg-gray-50">
-                                <tr>
-                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
-                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody className="bg-white divide-y divide-gray-200">
-                                {departments.map(dept => (
-                                    <tr key={dept._id}>
-                                        <td className="px-6 py-4 whitespace-nowrap">{dept.name}</td>
-                                        <td className="px-6 py-4 whitespace-nowrap">
-                                            <button onClick={() => handleDeleteDept(dept._id)} className="text-red-600 hover:text-red-900">Delete</button>
-                                        </td>
+            {/* Content Area */}
+            <div className="modern-card">
+                {activeTab === 'departments' && (
+                    <div>
+                        <div className="flex justify-between items-center mb-6">
+                            <h3 className="text-xl font-bold text-gray-900">Departments Management</h3>
+                        </div>
+                        <form onSubmit={handleAddDept} className="mb-8 flex gap-4 bg-gray-50 p-4 rounded-2xl">
+                            <input
+                                type="text"
+                                placeholder="New Department Name"
+                                className="modern-input"
+                                value={newDeptName}
+                                onChange={(e) => setNewDeptName(e.target.value)}
+                                required
+                            />
+                            <button type="submit" className="btn-primary whitespace-nowrap">
+                                <FiPlus className="w-4 h-4" /> Add Dept
+                            </button>
+                        </form>
+                        <div className="overflow-hidden">
+                            <table className="min-w-full">
+                                <thead className="bg-gray-50">
+                                    <tr>
+                                        <th className="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider rounded-l-xl">Name</th>
+                                        <th className="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider rounded-r-xl">Actions</th>
                                     </tr>
-                                ))}
-                            </tbody>
-                        </table>
+                                </thead>
+                                <tbody className="bg-white divide-y divide-gray-100">
+                                    {departments.map(dept => (
+                                        <tr key={dept._id} className="hover:bg-gray-50 transition-colors">
+                                            <td className="px-6 py-4 whitespace-nowrap font-medium text-gray-900">{dept.name}</td>
+                                            <td className="px-6 py-4 whitespace-nowrap">
+                                                <button onClick={() => handleDeleteDept(dept._id)} className="text-red-400 hover:text-red-600 transition-colors">
+                                                    <FiTrash2 className="w-5 h-5" />
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
-                </div>
-            )}
+                )}
 
-            {activeTab === 'doctors' && (
-                <div>
-                    <form onSubmit={handleAddDoctor} className="mb-8 bg-white p-6 rounded shadow">
-                        <h3 className="text-lg font-bold mb-4">Add New Doctor</h3>
-                        <div className="grid grid-cols-2 gap-4">
-                            <input type="text" placeholder="Name" className="apple-input" value={newDoc.name} onChange={e => setNewDoc({ ...newDoc, name: e.target.value })} required />
-                            <input type="email" placeholder="Email" className="apple-input" value={newDoc.email} onChange={e => setNewDoc({ ...newDoc, email: e.target.value })} required />
-                            <input type="password" placeholder="Password" className="apple-input" value={newDoc.password} onChange={e => setNewDoc({ ...newDoc, password: e.target.value })} required />
-                            <select className="apple-input" value={newDoc.specialization} onChange={e => setNewDoc({ ...newDoc, specialization: e.target.value })} required>
-                                <option value="">Select Specialization</option>
-                                {departments.map(d => <option key={d._id} value={d._id}>{d.name}</option>)}
-                            </select>
-                            <div className="col-span-2">
-                                <label className="block text-sm font-bold mb-1">Initial Schedule (One Day)</label>
+                {activeTab === 'doctors' && (
+                    <div>
+                        <div className="flex justify-between items-center mb-6">
+                            <h3 className="text-xl font-bold text-gray-900">Doctors Management</h3>
+                        </div>
+                        <form onSubmit={handleAddDoctor} className="mb-8 bg-gray-50 p-6 rounded-2xl space-y-4">
+                            <h4 className="font-bold text-gray-700 mb-2">Register New Doctor</h4>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <input type="text" placeholder="Name" className="modern-input" value={newDoc.name} onChange={e => setNewDoc({ ...newDoc, name: e.target.value })} required />
+                                <input type="email" placeholder="Email" className="modern-input" value={newDoc.email} onChange={e => setNewDoc({ ...newDoc, email: e.target.value })} required />
+                                <input type="password" placeholder="Password" className="modern-input" value={newDoc.password} onChange={e => setNewDoc({ ...newDoc, password: e.target.value })} required />
+                                <select className="modern-input" value={newDoc.specialization} onChange={e => setNewDoc({ ...newDoc, specialization: e.target.value })} required>
+                                    <option value="">Select Specialization</option>
+                                    {departments.map(d => <option key={d._id} value={d._id}>{d.name}</option>)}
+                                </select>
+                            </div>
+                            <div className="pt-2">
+                                <label className="block text-xs font-bold text-gray-500 mb-2 uppercase">Initial Schedule</label>
                                 <div className="flex gap-2">
-                                    <select className="apple-input" value={scheduleDay} onChange={e => setScheduleDay(e.target.value)}>
+                                    <select className="modern-input w-40" value={scheduleDay} onChange={e => setScheduleDay(e.target.value)}>
                                         {['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'].map(d => <option key={d} value={d}>{d}</option>)}
                                     </select>
-                                    <input type="text" placeholder="Slots (e.g. 09:00, 09:30)" className="apple-input flex-grow" value={scheduleSlots} onChange={e => setScheduleSlots(e.target.value)} />
+                                    <input type="text" placeholder="Slots (e.g. 09:00, 09:30)" className="modern-input flex-grow" value={scheduleSlots} onChange={e => setScheduleSlots(e.target.value)} />
                                 </div>
                             </div>
-                        </div>
-                        <button type="submit" className="mt-4 bg-primary text-white px-4 py-2 rounded">Add Doctor</button>
-                    </form>
+                            <div className="flex justify-end pt-2">
+                                <button type="submit" className="btn-primary">Create Doctor Account</button>
+                            </div>
+                        </form>
 
-                    <div className="bg-white shadow rounded-lg overflow-hidden">
-                        <table className="min-w-full divide-y divide-gray-200">
+                        <div className="overflow-hidden">
+                            <table className="min-w-full">
+                                <thead className="bg-gray-50">
+                                    <tr>
+                                        <th className="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider rounded-l-xl">Name</th>
+                                        <th className="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Specialization</th>
+                                        <th className="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider rounded-r-xl">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody className="bg-white divide-y divide-gray-100">
+                                    {doctors.map(doc => (
+                                        <tr key={doc._id} className="hover:bg-gray-50 transition-colors">
+                                            <td className="px-6 py-4 whitespace-nowrap font-medium text-gray-900">{doc.name}</td>
+                                            <td className="px-6 py-4 whitespace-nowrap text-gray-500">{doc.specialization?.name}</td>
+                                            <td className="px-6 py-4 whitespace-nowrap">
+                                                <button onClick={() => handleDeleteDoctor(doc._id)} className="text-red-400 hover:text-red-600 transition-colors">
+                                                    <FiTrash2 className="w-5 h-5" />
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                )}
+
+                {activeTab === 'appointments' && (
+                    <div className="overflow-x-auto">
+                        <table className="min-w-full">
                             <thead className="bg-gray-50">
                                 <tr>
-                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
-                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Specialization</th>
-                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                                    <th className="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider rounded-l-xl">Patient</th>
+                                    <th className="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Doctor</th>
+                                    <th className="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Date/Time</th>
+                                    <th className="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Status</th>
+                                    <th className="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider rounded-r-xl">Actions</th>
                                 </tr>
                             </thead>
-                            <tbody className="bg-white divide-y divide-gray-200">
-                                {doctors.map(doc => (
-                                    <tr key={doc._id}>
-                                        <td className="px-6 py-4 whitespace-nowrap">{doc.name}</td>
-                                        <td className="px-6 py-4 whitespace-nowrap">{doc.specialization?.name}</td>
+                            <tbody className="bg-white divide-y divide-gray-100">
+                                {appointments.map(appt => (
+                                    <tr key={appt._id} className="hover:bg-gray-50 transition-colors">
+                                        <td className="px-6 py-4 whitespace-nowrap font-medium text-gray-900">{appt.user?.name}</td>
+                                        <td className="px-6 py-4 whitespace-nowrap text-gray-500">{appt.doctor?.name}</td>
+                                        <td className="px-6 py-4 whitespace-nowrap text-gray-500">{new Date(appt.date).toLocaleDateString()} {appt.timeSlot}</td>
                                         <td className="px-6 py-4 whitespace-nowrap">
-                                            <button onClick={() => handleDeleteDoctor(doc._id)} className="text-red-600 hover:text-red-900">Delete</button>
+                                            <span className={`px-2 py-1 inline-flex text-xs leading-5 font-bold rounded-md
+                          ${appt.status === 'Confirmed' ? 'bg-green-100 text-green-700' :
+                                                    appt.status === 'Cancelled' ? 'bg-red-100 text-red-700' :
+                                                        'bg-yellow-100 text-yellow-700'}`}>
+                                                {appt.status}
+                                            </span>
+                                        </td>
+                                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                            <span className="text-gray-400 text-sm">View Only</span>
                                         </td>
                                     </tr>
                                 ))}
                             </tbody>
                         </table>
                     </div>
-                </div>
-            )}
-
-            {activeTab === 'appointments' && (
-                <div className="bg-white shadow rounded-lg overflow-hidden">
-                    <table className="min-w-full divide-y divide-gray-200">
-                        <thead className="bg-gray-50">
-                            <tr>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Patient</th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Doctor</th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date/Time</th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody className="bg-white divide-y divide-gray-200">
-                            {appointments.map(appt => (
-                                <tr key={appt._id}>
-                                    <td className="px-6 py-4 whitespace-nowrap">{appt.user?.name}</td>
-                                    <td className="px-6 py-4 whitespace-nowrap">{appt.doctor?.name}</td>
-                                    <td className="px-6 py-4 whitespace-nowrap">{new Date(appt.date).toLocaleDateString()} {appt.timeSlot}</td>
-                                    <td className="px-6 py-4 whitespace-nowrap">
-                                        <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full 
-                      ${appt.status === 'Confirmed' ? 'bg-green-100 text-green-800' :
-                                                appt.status === 'Cancelled' ? 'bg-red-100 text-red-800' :
-                                                    'bg-yellow-100 text-yellow-800'}`}>
-                                            {appt.status}
-                                        </span>
-                                    </td>
-                                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                        {/* Actions removed for Admin */}
-                                        <span className="text-gray-400 text-sm">View Only</span>
-                                    </td>
-                                </tr>
-                            ))}
-                        </tbody>
-                    </table>
-                </div>
-            )}
-        </div>
+                )}
+            </div>
+        </DashboardLayout>
     );
 };
 

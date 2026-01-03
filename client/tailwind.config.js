@@ -4,35 +4,37 @@ export default {
         "./index.html",
         "./src/**/*.{js,ts,jsx,tsx}",
     ],
-    darkMode: 'class', // Enable dark mode with class strategy
+    darkMode: 'class',
     theme: {
         extend: {
             colors: {
-                // Apple Light Mode
-                primary: '#007AFF', // Apple Blue
-                secondary: '#5856D6', // Apple Purple
-                accent: '#34C759', // Apple Green
+                primary: '#1e4d3b', // Forest Green
+                secondary: '#34c759', // Light Green
+                accent: '#E4F4EC', // Very Light Green for backgrounds
 
-                // Apple Gray Scale
-                appleGray: {
-                    50: '#F5F5F7',
-                    100: '#E8E8ED',
-                    200: '#D2D2D7',
-                    300: '#B0B0B5',
-                    400: '#86868B',
-                    500: '#6E6E73',
-                    600: '#515154',
-                    700: '#424245',
-                    800: '#1D1D1F',
-                    900: '#000000',
+                // Grays from design
+                surface: '#ffffff',
+                background: '#f3f4f6',
+
+                // Keeping some grays for utility
+                gray: {
+                    50: '#F9FAFB',
+                    100: '#F3F4F6',
+                    200: '#E5E7EB',
+                    300: '#D1D5DB',
+                    400: '#9CA3AF',
+                    500: '#6B7280',
+                    600: '#4B5563',
+                    700: '#374151',
+                    800: '#1F2937',
+                    900: '#111827',
                 },
+                // Donezo specific
+                sidebar: '#FAFAFA',
             },
             fontFamily: {
-                sans: ['-apple-system', 'BlinkMacSystemFont', 'SF Pro Display', 'SF Pro Text', 'Helvetica Neue', 'Helvetica', 'Arial', 'sans-serif'],
+                sans: ['Inter', 'system-ui', 'sans-serif'], // Assuming Inter or similar clean font
             },
-            backdropBlur: {
-                xs: '2px',
-            }
         },
     },
     plugins: [],

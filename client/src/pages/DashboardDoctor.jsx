@@ -3,6 +3,8 @@ import axios from 'axios';
 import AuthContext from '../context/AuthContext';
 import { toast } from 'react-toastify';
 import LoadingSpinner from '../components/LoadingSpinner';
+import DashboardLayout from '../components/DashboardLayout';
+import { FiArrowUpRight, FiUsers, FiClock, FiCalendar } from 'react-icons/fi';
 
 const DashboardDoctor = () => {
     const { user } = useContext(AuthContext);
@@ -107,47 +109,91 @@ const DashboardDoctor = () => {
     if (loading) return <LoadingSpinner fullScreen />;
 
     return (
-        <div className="min-h-screen bg-appleGray-50 dark:bg-appleGray-800 transition-colors duration-300"><div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-            <h1 className="text-4xl font-semibold text-appleGray-900 dark:text-white mb-8">Doctor Dashboard</h1>
+        <DashboardLayout>
+            <div className="mb-6">
+                <h1 className="text-3xl font-bold text-gray-900 mb-2">Doctor Dashboard</h1>
+                <p className="text-gray-500">Manage your appointments and schedule efficiently.</p>
+            </div>
+
+            {/* Stats Overview */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                <div className="modern-card bg-primary text-white border-none">
+                    <div className="flex justify-between items-center mb-4">
+                        <div className="p-2 bg-white/20 rounded-lg">
+                            <FiUsers className="w-6 h-6 text-white" />
+                        </div>
+                        <span className="text-emerald-100 text-xs font-semibold bg-white/10 px-2 py-1 rounded">+12%</span>
+                    </div>
+                    <div className="text-3xl font-bold mb-1">{appointments.length}</div>
+                    <div className="text-emerald-100 text-sm">Total Appointments</div>
+                </div>
+
+                <div className="modern-card">
+                    <div className="flex justify-between items-center mb-4">
+                        <div className="p-2 bg-blue-50 rounded-lg">
+                            <FiClock className="w-6 h-6 text-blue-600" />
+                        </div>
+                    </div>
+                    <div className="text-3xl font-bold mb-1 text-gray-900">{appointments.filter(a => a.status === 'Pending').length}</div>
+                    <div className="text-gray-500 text-sm">Pending Requests</div>
+                </div>
+
+                <div className="modern-card">
+                    <div className="flex justify-between items-center mb-4">
+                        <div className="p-2 bg-purple-50 rounded-lg">
+                            <FiCalendar className="w-6 h-6 text-purple-600" />
+                        </div>
+                    </div>
+                    <div className="text-3xl font-bold mb-1 text-gray-900">{currentSchedule.length}</div>
+                    <div className="text-gray-500 text-sm">Active Schedule Days</div>
+                </div>
+            </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                {/* Appointments */}
+                {/* Appointments List */}
                 <div>
-                    <h2 className="text-2xl font-semibold text-appleGray-900 dark:text-white mb-4">Upcoming Appointments</h2>
-                    <div className="apple-card shadow overflow-hidden sm:rounded-md">
-                        <ul className="divide-y divide-gray-200">
+                    <div className="flex justify-between items-center mb-4">
+                        <h2 className="text-xl font-bold text-gray-900">Upcoming Appointments</h2>
+                        <button className="text-primary text-sm font-semibold hover:underline">View All</button>
+                    </div>
+                    <div className="modern-card p-0 overflow-hidden">
+                        <ul className="divide-y divide-gray-100">
                             {appointments.map((appt) => (
-                                <li key={appt._id} className="px-6 py-4">
+                                <li key={appt._id} className="p-6 hover:bg-gray-50 transition-colors">
                                     <div className="flex items-center justify-between">
-                                        <div>
-                                            <p className="text-sm font-medium text-primary">
-                                                {appt.user?.name} ({appt.user?.age} yrs)
-                                            </p>
-                                            <p className="text-sm text-gray-500">
-                                                {new Date(appt.date).toLocaleDateString()} at {appt.timeSlot}
-                                            </p>
-                                            <p className="text-sm text-gray-500">
-                                                Token: {appt.tokenNumber || 'Pending'}
-                                            </p>
+                                        <div className="flex items-center gap-4">
+                                            <div className="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center text-gray-500 font-bold">
+                                                {appt.user?.name?.charAt(0)}
+                                            </div>
+                                            <div>
+                                                <p className="font-bold text-gray-900">
+                                                    {appt.user?.name} <span className="text-gray-400 font-normal text-xs">({appt.user?.age} yrs)</span>
+                                                </p>
+                                                <p className="text-xs text-gray-500">
+                                                    {new Date(appt.date).toLocaleDateString()} at {appt.timeSlot}
+                                                </p>
+                                            </div>
                                         </div>
-                                        <div className="text-right">
-                                            <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full mb-2
-                        ${appt.status === 'Confirmed' ? 'bg-green-100 text-green-800' :
-                                                    appt.status === 'Cancelled' ? 'bg-red-100 text-red-800' :
-                                                        'bg-yellow-100 text-yellow-800'}`}>
+
+                                        <div className="flex flex-col items-end gap-2">
+                                            <span className={`px-2 py-1 text-[10px] font-bold uppercase tracking-wider rounded-md
+                        ${appt.status === 'Confirmed' ? 'bg-green-100 text-green-700' :
+                                                    appt.status === 'Cancelled' ? 'bg-red-100 text-red-700' :
+                                                        'bg-yellow-100 text-yellow-700'}`}>
                                                 {appt.status}
                                             </span>
+
                                             {appt.status === 'Pending' && (
-                                                <div className="flex gap-2 justify-end">
+                                                <div className="flex gap-2">
                                                     <button
                                                         onClick={() => handleStatusUpdate(appt._id, 'Confirmed')}
-                                                        className="bg-green-500 text-white px-2 py-1 rounded text-xs hover:bg-green-600"
+                                                        className="text-xs bg-green-500 text-white px-3 py-1.5 rounded-full hover:bg-green-600 transition-colors shadow-sm"
                                                     >
                                                         Approve
                                                     </button>
                                                     <button
                                                         onClick={() => handleStatusUpdate(appt._id, 'Rejected')}
-                                                        className="bg-red-500 text-white px-2 py-1 rounded text-xs hover:bg-red-600"
+                                                        className="text-xs bg-red-50 text-red-500 px-3 py-1.5 rounded-full hover:bg-red-100 transition-colors"
                                                     >
                                                         Reject
                                                     </button>
@@ -157,71 +203,73 @@ const DashboardDoctor = () => {
                                     </div>
                                 </li>
                             ))}
-                            {appointments.length === 0 && <li className="px-6 py-4 text-gray-500">No appointments found.</li>}
+                            {appointments.length === 0 && <li className="p-6 text-center text-gray-500">No appointments found.</li>}
                         </ul>
                     </div>
                 </div>
 
                 {/* Schedule Management */}
-                <div>
-                    <h2 className="text-2xl font-semibold text-appleGray-900 dark:text-white mb-4">Manage Schedule</h2>
+                <div className="space-y-8">
+                    {/* Schedule Manager */}
+                    <div className="modern-card">
+                        <div className="flex justify-between items-center mb-6">
+                            <h3 className="font-bold text-gray-900">Manage Schedule</h3>
+                            <span className="text-xs text-gray-400 bg-gray-50 px-2 py-1 rounded">Weekly Recurring</span>
+                        </div>
 
-                    {/* Current Schedule */}
-                    {currentSchedule.length > 0 && (
-                        <div className="apple-card p-4 rounded-lg shadow mb-4">
-                            <h3 className="font-semibold text-gray-700 mb-3">Current Schedule</h3>
-                            <div className="space-y-2">
+                        {/* Current Schedule Chips */}
+                        {currentSchedule.length > 0 && (
+                            <div className="flex flex-wrap gap-2 mb-6">
                                 {currentSchedule.map((sch) => (
-                                    <div key={sch.day} className="flex justify-between items-start p-2 bg-gray-50 rounded">
-                                        <div>
-                                            <p className="font-medium text-gray-800">{sch.day}</p>
-                                            <p className="text-sm text-gray-600">{sch.slots.join(', ')}</p>
+                                    <div key={sch.day} className="group relative bg-gray-50 border border-gray-200 rounded-xl px-4 py-2 hover:border-primary transition-colors cursor-default">
+                                        <div className="flex justify-between items-center gap-3">
+                                            <span className="font-semibold text-gray-900">{sch.day}</span>
+                                            <button
+                                                onClick={() => handleRemoveDay(sch.day)}
+                                                className="text-gray-400 hover:text-red-500 transition-colors"
+                                            >
+                                                &times;
+                                            </button>
                                         </div>
-                                        <button
-                                            onClick={() => handleRemoveDay(sch.day)}
-                                            className="text-red-500 hover:text-red-700 text-sm"
-                                        >
-                                            Remove
-                                        </button>
+                                        <div className="text-xs text-gray-500 mt-1">{sch.slots.length} Slots</div>
                                     </div>
                                 ))}
                             </div>
-                        </div>
-                    )}
+                        )}
 
-                    {/* Add/Update Schedule Form */}
-                    <form onSubmit={handleUpdateSchedule} className="apple-card p-6 rounded-lg shadow">
-                        <h3 className="font-semibold text-gray-700 mb-4">Add/Update Day Schedule</h3>
-                        <div className="mb-4">
-                            <label className="block text-gray-700 text-sm font-bold mb-2">Day</label>
-                            <select
-                                className="apple-input"
-                                value={day}
-                                onChange={(e) => setDay(e.target.value)}
-                            >
-                                {['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'].map(d => (
-                                    <option key={d} value={d}>{d}</option>
-                                ))}
-                            </select>
-                        </div>
-                        <div className="mb-6">
-                            <label className="block text-gray-700 text-sm font-bold mb-2">Available Slots (comma separated)</label>
-                            <input
-                                type="text"
-                                placeholder="09:00, 09:30, 10:00, 14:00, 14:30"
-                                className="apple-input"
-                                value={slots}
-                                onChange={(e) => setSlots(e.target.value)}
-                            />
-                            <p className="text-xs text-gray-500 mt-1">Enter time slots separated by commas</p>
-                        </div>
-                        <button type="submit" disabled={scheduleLoading} className="w-full apple-btn-primary hover:bg-sky-600 flex justify-center items-center">
-                            {scheduleLoading ? <LoadingSpinner size="small" color="border-white" /> : 'Save Schedule'}
-                        </button>
-                    </form>
+                        {/* Add/Update Schedule Form */}
+                        <form onSubmit={handleUpdateSchedule} className="space-y-4">
+                            <div>
+                                <label className="block text-gray-700 text-xs font-bold mb-2 uppercase tracking-wide">Select Day</label>
+                                <select
+                                    className="modern-input"
+                                    value={day}
+                                    onChange={(e) => setDay(e.target.value)}
+                                >
+                                    {['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'].map(d => (
+                                        <option key={d} value={d}>{d}</option>
+                                    ))}
+                                </select>
+                            </div>
+                            <div>
+                                <label className="block text-gray-700 text-xs font-bold mb-2 uppercase tracking-wide">Available Slots</label>
+                                <input
+                                    type="text"
+                                    placeholder="e.g. 09:00, 09:30, 10:00"
+                                    className="modern-input"
+                                    value={slots}
+                                    onChange={(e) => setSlots(e.target.value)}
+                                />
+                                <p className="text-[10px] text-gray-400 mt-1.5 ml-1">Comma separated times (24h format recommended)</p>
+                            </div>
+                            <button type="submit" disabled={scheduleLoading} className="w-full btn-primary mt-2">
+                                {scheduleLoading ? <LoadingSpinner size="small" color="border-white" /> : 'Save Availability'}
+                            </button>
+                        </form>
+                    </div>
                 </div>
             </div>
-        </div>
+        </DashboardLayout>
     );
 };
 
